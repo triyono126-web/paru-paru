@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Jelajah AR Sistem Pernapasan Manusia</title>
+  <meta name="description" content="Media pembelajaran AR sistem pernapasan manusia untuk siswa sekolah dasar." />
+  <style>
+    :root { --navy:#17324d; --blue:#2677b8; --pale:#edf7ff; --ink:#172b3a; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:#f3f8fc; }
+    header { background:linear-gradient(135deg,#123e62,#2677b8); color:white; padding:18px 16px 16px; }
+    header h1 { margin:0 0 6px; font-size:1.35rem; }
+    header p { margin:0; font-size:.95rem; line-height:1.45; }
+    main { max-width:900px; margin:auto; padding:14px; }
+    .notice { background:#fff7df; border:1px solid #efd78a; padding:12px; border-radius:12px; line-height:1.45; font-size:.92rem; }
+    .panel { background:white; border-radius:14px; padding:14px; margin:12px 0; box-shadow:0 2px 9px #15344c12; }
+    h2 { margin:0 0 9px; color:var(--navy); font-size:1.1rem; }
+    p, li { line-height:1.5; }
+    .steps { padding-left:21px; margin:8px 0; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+    button { border:0; border-radius:10px; padding:11px 13px; background:var(--blue); color:white; font-weight:700; cursor:pointer; font-size:.95rem; }
+    button.secondary { background:#e7f2fb; color:#174e78; }
+    .modelkey { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .keyitem { border:1px solid #e0eaf1; border-radius:10px; padding:10px; font-size:.9rem; }
+    .keyitem b { display:block; margin-bottom:3px; }
+    .quiz-q { font-weight:700; margin-bottom:9px; }
+    .answer { margin-top:9px; padding:10px; background:#edf7ff; border-radius:9px; display:none; }
+    footer { padding:12px 16px 24px; color:#516879; text-align:center; font-size:.8rem; }
+    .small { color:#536b7c; font-size:.88rem; }
+    @media(max-width:520px){ .modelkey{grid-template-columns:1fr;} }
+  </style>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🫁 Jelajah AR: Sistem Pernapasan Manusia</h1>
+    <p>Media eksplorasi IPAS untuk siswa sekolah dasar — amati organ pernapasan dalam model 3D.</p>
+  </header>
+  <main>
+    <div class="notice"><b>Petunjuk penting:</b> Buka halaman ini melalui tautan HTTPS di HP, izinkan akses kamera, lalu arahkan kamera ke <b>marker Hiro</b>. Untuk uji coba di komputer, kamera mungkin tidak tersedia. Koneksi internet diperlukan untuk memuat pustaka AR.</div>
+
+    <section class="panel">
+      <h2>1. Mulai pemindaian AR</h2>
+      <p>Tekan tombol di bawah untuk membuka tampilan kamera. Letakkan marker Hiro yang dicetak atau ditampilkan di perangkat lain pada permukaan datar, lalu arahkan kamera ke marker.</p>
+      <div class="chips"><button id="startAR">Buka Kamera AR</button><button class="secondary" id="stopAR">Tutup Kamera AR</button></div>
+      <p class="small">Marker Hiro adalah marker standar bawaan AR.js, bukan marker gambar khusus. Contoh marker dapat dilihat di <a href="https://ar-js-org.github.io/AR.js/three.js/examples/marker-training/examples/generator.html" target="_blank" rel="noopener">halaman generator marker AR.js</a>.</p>
+      <div id="arHost" style="display:none; height:62vh; min-height:340px; overflow:hidden; border-radius:12px; background:#101820; position:relative;"></div>
+      <p id="arStatus" class="small" aria-live="polite">Kamera belum dibuka.</p>
+    </section>
+
+    <section class="panel">
+      <h2>2. Kenali organ pernapasan</h2>
+      <p>Model AR ini merupakan ilustrasi skematis untuk membantu mengenali posisi organ utama, bukan model anatomi medis yang rinci.</p>
+      <div class="modelkey">
+        <div class="keyitem"><b>Hidung dan mulut</b>Udara masuk ke tubuh melalui hidung atau mulut.</div>
+        <div class="keyitem"><b>Trakea</b>Saluran yang membawa udara menuju bronkus.</div>
+        <div class="keyitem"><b>Bronkus</b>Dua cabang saluran udara yang menuju paru-paru.</div>
+        <div class="keyitem"><b>Paru-paru</b>Tempat pertukaran gas terjadi di alveolus.</div>
+        <div class="keyitem"><b>Diafragma</b>Otot yang membantu perubahan volume rongga dada saat bernapas.</div>
+        <div class="keyitem"><b>Alveolus</b>Kantung udara kecil tempat oksigen dan karbon dioksida bertukar dengan darah.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Ayo berpikir seperti ilmuwan!</h2>
+      <p>Amati model, diskusikan dengan teman, lalu jawab pertanyaan berikut menggunakan alasan ilmiah.</p>
+      <div class="quiz-q">Mengapa saat menarik napas, rongga dada membesar?</div>
+      <div class="chips"><button class="secondary" onclick="showAnswer('a')">Lihat petunjuk</button><button class="secondary" onclick="showAnswer('b')">Lihat penjelasan</button></div>
+      <div id="hint" class="answer">Petunjuk: perhatikan peran diafragma dan otot antartulang rusuk.</div>
+      <div id="explanation" class="answer">Saat menarik napas, diafragma berkontraksi dan bergerak turun, sementara tulang rusuk terangkat. Volume rongga dada meningkat sehingga tekanan di dalamnya menurun dan udara masuk ke paru-paru.</div>
+      <hr style="border:0;border-top:1px solid #e1ebf2;margin:16px 0" />
+      <div class="quiz-q">Pertanyaan komunikasi: Jelaskan kepada temanmu perjalanan udara dari hidung sampai ke tempat pertukaran gas.</div>
+      <p class="small">Tantangan: gunakan istilah hidung, trakea, bronkus, bronkiolus, dan alveolus. Dengarkan penjelasan teman lalu tambahkan satu pertanyaan.</p>
+    </section>
+
+    <section class="panel">
+      <h2>4. Tanya tutor AI</h2>
+      <p>Untuk versi awal, siswa dapat membuka tutor AI di tab terpisah dengan pendampingan guru. Minta AI menjelaskan konsep dengan bahasa anak SD, memberi petunjuk bertahap, dan tidak langsung memberikan jawaban tugas.</p>
+      <button onclick="window.open('https://chatgpt.com/','_blank','noopener')">Buka ChatGPT</button>
+      <p class="small">Catatan: tombol ini membuka ChatGPT secara terpisah; chatbot belum tertanam langsung dalam halaman AR. Untuk siswa, guru sebaiknya mengoperasikan akun AI dan tidak memasukkan data pribadi anak.</p>
+    </section>
+  </main>
+  <footer>Media prototipe pembelajaran IPAS • AR.js + A-Frame • Gunakan dengan bimbingan guru</footer>
+
+  <script>
+    function showAnswer(which) {
+      document.getElementById('hint').style.display = which === 'a' ? 'block' : 'none';
+      document.getElementById('explanation').style.display = which === 'b' ? 'block' : 'none';
+    }
+    let sceneBuilt = false;
+    function buildAR() {
+      const host = document.getElementById('arHost');
+      if (sceneBuilt) { host.style.display = 'block'; return; }
+      host.innerHTML = `
+      <a-scene embedded vr-mode-ui="enabled:false" renderer="colorManagement:true; antialias:true; alpha:true" arjs="sourceType:webcam; facingMode:environment; debugUIEnabled:false" style="width:100%;height:100%;">
+        <a-assets></a-assets>
+        <a-marker preset="hiro">
+          <a-entity position="0 0 0">
+            <!-- simplified 3D respiratory system: trachea, bronchi, lungs and diaphragm -->
+            <a-cylinder position="0 0.88 0" radius="0.075" height="0.85" color="#f2c9a9" material="roughness:0.75"></a-cylinder>
+            <a-cylinder position="-0.22 0.53 0" radius="0.052" height="0.55" rotation="0 0 -48" color="#f2c9a9"></a-cylinder>
+            <a-cylinder position="0.22 0.53 0" radius="0.052" height="0.55" rotation="0 0 48" color="#f2c9a9"></a-cylinder>
+            <a-sphere position="-0.35 0.24 0" scale="0.48 0.67 0.22" color="#e98691" material="roughness:0.65"></a-sphere>
+            <a-sphere position="0.35 0.24 0" scale="0.48 0.67 0.22" color="#e98691" material="roughness:0.65"></a-sphere>
+            <a-torus position="0 0.88 0.01" radius="0.077" radius-tubular="0.012" color="#b87963" rotation="90 0 0"></a-torus>
+            <a-cylinder position="0 -0.24 0" radius="0.34" height="0.045" color="#e5b85c" rotation="0 0 0"></a-cylinder>
+            <a-text value="TRakea" color="#17324d" align="center" width="1.7" position="0 1.42 0.04" rotation="0 0 0"></a-text>
+            <a-text value="PARU-PARU" color="#17324d" align="center" width="2.4" position="0 -0.58 0.04"></a-text>
+            <a-text value="DIAFRAGMA" color="#704d10" align="center" width="2" position="0 -0.48 0.06"></a-text>
+          </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+      </a-scene>`;
+      sceneBuilt = true;
+      host.style.display = 'block';
+      document.getElementById('arStatus').textContent = 'Jika diminta, izinkan akses kamera. Arahkan kamera ke marker Hiro.';
+    }
+    document.getElementById('startAR').addEventListener('click', buildAR);
+    document.getElementById('stopAR').addEventListener('click', function(){
+      const host = document.getElementById('arHost');
+      const video = host.querySelector('video');
+      if (video && video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+      host.style.display = 'none';
+      host.innerHTML = '';
+      sceneBuilt = false;
+      document.getElementById('arStatus').textContent = 'Kamera ditutup.';
+    });
+  </script>
+</body>
+</html>
